@@ -1,0 +1,15 @@
+{
+    "name": "genuitec.team-extensions.extension-manager",
+    "title": "Plugin Sync",
+    "description": "Lorem ipsum",
+    "homepage": "http://genuitec.com",
+    "version": "0.0.1",
+    "author": "Salvador Cabrera <sal@genuitec.com> (http://genuitec.com)",
+    "license": "MIT",
+    "engines": {
+        "brackets": ">=0.24.0"
+    },
+    "i18n": [ "en"],
+    "package-i18n": {
+    }
+}
