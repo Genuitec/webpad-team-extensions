@@ -8,7 +8,38 @@ define(function (require, exports, module) {
         SAVE_EXTENSIONS_DIALOG_TITLE = "Save Extensions",
         SAVE_BUTTON_ID = "save-extensions-save-button",
         SAVE_BUTTON_LABEL = "Save",
-        DIALOG_CLASS = "save-extensions-dialog";
+        DIALOG_CLASS = "save-extensions-dialog",
+        dialog = null;
+    
+    var TeamExtensions = require("TeamExtensions"),
+        ExtensionEntry = require("text!templates/save-extensions-extension-entry.html");
+    
+    function render() {
+        var $dlg = dialog.getElement();
+        $dlg.off("click", "button.remove");
+        $dlg.off("click", "button.install");
+        
+        var extensions = TeamExtensions.getAll();
+        $("tbody.extension-list").empty();
+        
+        extensions.forEach(function (extension) {
+            $(Mustache.render(ExtensionEntry, {extension: extension}))
+                .appendTo($("tbody.extension-list"));
+        });
+    }
+    
+    function bindEvents() {
+        var $dlg = dialog.getElement();
+        
+        $dlg.one("click", "button.remove", function (event) {
+            var $button = $(event.target);
+            TeamExtensions.unmarkAsTeam($button.attr("data-extension-id"));
+        });
+        $dlg.one("click", "button.install", function (event) {
+            var $button = $(event.target);
+            TeamExtensions.markAsTeam($button.attr("data-extension-id"));
+        });
+    }
     
     function show(installedExtensions) {
         var SaveExtensionsBodyTemplate = require("text!templates/save-extensions-body-dialog.html"),
@@ -16,52 +47,53 @@ define(function (require, exports, module) {
             FileSystem = brackets.getModule("filesystem/FileSystem"),
             FileUtils = brackets.getModule("file/FileUtils"),
             ProjectManager = brackets.getModule("project/ProjectManager"),
-            Dialogs = brackets.getModule('widgets/Dialogs');
+            Dialogs = brackets.getModule("widgets/Dialogs");
         
-        var dialog = Dialogs.showModalDialog(
-            DIALOG_CLASS,
-            SAVE_EXTENSIONS_DIALOG_TITLE,
-            Mustache.render(SaveExtensionsBodyTemplate, {extensions: installedExtensions}),
-            [
-                {
-                    className: Dialogs.DIALOG_BTN_CLASS_PRIMARY,
-                    id: SAVE_BUTTON_ID,
-                    text: SAVE_BUTTON_LABEL
-                },
-                {
-                    className: Dialogs.DIALOG_BTN_CANCEL,
-                    id: Dialogs.DIALOG_BTN_CANCEL,
-                    text: Dialogs.DIALOG_BTN_CANCEL
-                }
-            ],
-            false
+        var extensions = TeamExtensions.getAll();
+        dialog = Dialogs.showModalDialogUsingTemplate(
+            Mustache.render(SaveExtensionsBodyTemplate)
         );
         
-        var $dlg = dialog.getElement();
-        var deferred = $.Deferred();
-
-        $dlg.one("buttonClick", function (e, id) {
-            if (id === SAVE_BUTTON_ID) {
-                
-                var baseURL = ProjectManager.getProjectRoot().fullPath;
-                var filePath = baseURL + '.team.extensions';
-
-                var file = FileSystem.getFileForPath(filePath);
-                var fileContents = JSON.stringify(installedExtensions, null, 4);
-                FileUtils.writeText(file, fileContents, true).then(
-                    function () {
-                        deferred.resolve();
-                    },
-                    function () {
-                        console.log("Error while writing extensions");
-                    }
-                );
-            } else {
-                dialog.close();
-            }
+        var $trackAll = $("<a href='#team-track-alll'>Track All</a>")
+            .click(function () {
+                var extensionIds = [];
+                dialog.getElement()
+                    .find("button.install")
+                    .each(function () {
+                        extensionIds.push($(this).attr("data-extension-id"));
+                    });
+                if (extensionIds.length > 0) {
+                    TeamExtensions.markAllAsTeam(extensionIds);
+                }
+            });
+        dialog.getElement().find("div.right-column").append($trackAll);
+        
+        var $untrackAll = $("<a href='#team-untrack-alll'>Untrack All</a>")
+            .css({ marginLeft: "20px" })
+            .click(function () {
+                var extensionIds = [];
+                dialog.getElement()
+                    .find("button.remove")
+                    .each(function () {
+                        extensionIds.push($(this).attr("data-extension-id"));
+                    });
+                if (extensionIds.length > 0) {
+                    TeamExtensions.unmarkAllAsTeam(extensionIds);
+                }
+            });
+        dialog.getElement().find("div.right-column").append($untrackAll);
+        
+        TeamExtensions.update().then(function () {
+            render();
+            bindEvents();
+            
+            TeamExtensions.on("change", function () {
+                render();
+                bindEvents();
+            });
         });
         
-        return deferred.promise;
+        return dialog;
     }
 
     module.exports.show = show;

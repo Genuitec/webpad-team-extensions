@@ -1,5 +1,5 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define, brackets, Mustache */
+/*global define, brackets, Mustache, $ */
 
 define(function (require, exports, module) {
     "use strict";
@@ -10,85 +10,139 @@ define(function (require, exports, module) {
         ProjectManager = brackets.getModule("project/ProjectManager"),
         FileSystem = brackets.getModule("filesystem/FileSystem"),
         FileUtils = brackets.getModule("file/FileUtils"),
+        AppInit = brackets.getModule("utils/AppInit"),
+        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
+        StatusBar = brackets.getModule("widgets/StatusBar"),
         ExtensionManager = brackets.getModule("extensibility/ExtensionManager"),
-        _  = brackets.getModule("thirdparty/lodash");
+        ExtensionManagerDialog = brackets.getModule("extensibility/ExtensionManagerDialog");
     
     // Extension modules
-    var InstallMissingExtensionsDialog = require("widgets/InstallMissingExtensionsDialog"),
+    var TeamExtensions = require('TeamExtensions'),
         SaveExtensionsDialog = require("widgets/SaveExtensionsDialog");
     
-    var requiredExtensions = [];
-    var MAIN_MENU_ID = "team-extensions-main";
-    var SAVE_EXTENSIONS_COMMAND_ID = "team-extensions-save-extensions";
+    var MAIN_MENU_ID = "team-extensions-main",
+        SAVE_EXTENSIONS_COMMAND_ID = "team-extensions-save-extensions";
     
-    var WebPadMenu = Menus.addMenu("WebPad", MAIN_MENU_ID);
+    var WebPadMenu = Menus.addMenu("Team", MAIN_MENU_ID);
+    var $missingExtensionsIndicator = $("<a href='#team-install-extensions'></a>").css({ color: "orangered" });
     
-    CommandManager.register("Save Team Extensions", SAVE_EXTENSIONS_COMMAND_ID, function () {
-        console.log("Saving team extensions");
-        var installedExtensions = [];
-        ExtensionManager.downloadRegistry().then(
-            function () {
-                _.each(ExtensionManager.extensions, function (value, key) {
-                    if (typeof value.installInfo !== 'undefined' &&
-                            typeof value.registryInfo !== 'undefined' &&
-                            value.installInfo.status === "enabled"
-                            ) {
-                        console.log(key);
-                        console.log(value);
-                        installedExtensions.push({
-                            id: value.installInfo.metadata.name,
-                            version: value.installInfo.metadata.version
-                        });
-                    }
-                });
-                console.log(installedExtensions);
-                return SaveExtensionsDialog.show(installedExtensions);
-            }
-        ).then(
-            function () {
-                var baseURL = ProjectManager.getProjectRoot().fullPath;
-                var filePath = baseURL + '.team.extensions';
-                
-                return window.alert("Extensions saved to: " + filePath);
-            }
-        ).done();
+    $missingExtensionsIndicator.on("click", function () {
+        CommandManager.execute("file.extensionManager");
+    });
+    
+    CommandManager.register("Manage Extensions", SAVE_EXTENSIONS_COMMAND_ID, function () {
+        ExtensionManager.downloadRegistry().then(function () {
+            TeamExtensions.manageExtensions();
+        }).done();
     });
     
     WebPadMenu.addMenuItem(SAVE_EXTENSIONS_COMMAND_ID);
     
-    ProjectManager.on("projectOpen", function () {
-        var baseURL = ProjectManager.getProjectRoot().fullPath;
-        var file = baseURL + '.team.extensions';
-        
-        FileUtils.readAsText(FileSystem.getFileForPath(file)).then(
-            function (text) {
-                requiredExtensions = JSON.parse(text);
+    var observer = null,
+        tabObserver = null;
+    
+    function updateStatusBar(forceTeamExtensionsRefresh) {
+        TeamExtensions.checkForMissingExtensions(ExtensionManager, forceTeamExtensionsRefresh)
+            .then(function (missingExtensions) {
+                if (missingExtensions.length > 0) {
+                    var plural = "";
+                    if (missingExtensions.length > 1) {
+                        plural = "s";
+                    }
+                    
+                    $missingExtensionsIndicator.html(
+                        "Install " +
+                        "<strong style='color: orangered;'>" + missingExtensions.length + "</strong>" +
+                        " team extension" + plural
+                    ).css;
+                    StatusBar.updateIndicator("team-extensions", true);
+                } else {
+                    StatusBar.updateIndicator("team-extensions", false);
+                }
 
-                return ExtensionManager.downloadRegistry();
-            }
-        ).then(
-            function () {
-                console.group('Missing extensions');
-                var missingExtensions = [];
-                _.each(ExtensionManager.extensions, function (value, key) {
-                    requiredExtensions.forEach(function (requiredExtension) {
-                        if (key === requiredExtension.id && typeof value.installInfo === 'undefined') {
-                            console.log(key);
-                            console.log(value);
-                            missingExtensions.push(requiredExtension);
+            }).done();
+    };
+    
+    AppInit.appReady(function () {
+        var teamExtensionsIcon = ExtensionUtils.getModulePath(module, "images/extension-manager-team.svg");
+        var target = document.querySelector('body');
+
+        var observer = new window.MutationObserver(function (mutations) {
+            var ExtensionManagerViewModel   = require("TeamExtensionsViewModel"),
+                ExtensionManagerView        = require("ExtensionManagerView").ExtensionManagerView;
+            
+            mutations.forEach(function (mutation) {
+                if ($('.extension-manager-dialog').length === 1 &&
+                    $('.extension-manager-dialog ul.nav a[href="#team"]').length === 0
+                   ) {
+                    var installedTabSelector = document.querySelector('.tab-content');
+
+                    // create an observer instance
+                    tabObserver = new window.MutationObserver(function (mutations) {
+                        var i = 0;
+                        for (i = 0; i < mutations.length; i++) {
+                            var mut = mutations[i];
+                            if (mut.addedNodes.length > 0) {
+                                var j = 0,
+                                    nodeFound = false;
+
+                                for (j = 0; j < mut.addedNodes.length; j++) {
+                                    var node = mut.addedNodes[j];
+                                    if (node.id === "installed" && $("team").length === 0) {
+                                        nodeFound = true;                                    
+                                        break;
+                                    }                                    
+                                };
+                                
+                                if (nodeFound &&
+                                    $('.extension-manager-dialog ul.nav').find('a.team').length === 0
+                                   ) {
+                                    $('.extension-manager-dialog ul.nav').append('<li><a href="#team" class="team" data-toggle="tab"><img src="' + teamExtensionsIcon + '"/><br/>Team</a></li>');
+
+                                    var model = new ExtensionManagerViewModel.TeamExtensionsViewModel(),
+                                        view    = new ExtensionManagerView(),
+                                        promise = view.initialize(model);
+
+                                    view.$el.appendTo($(".extension-manager-dialog .modal-body"));
+
+                                    $('.extension-manager-dialog').on("input", ".search", function (e) {
+                                        var query = $(this).val();
+                                        view.filter(query);
+                                    });
+                                    break;
+                                }
+                            }
                         }
                     });
-                });
-                console.groupEnd();
 
-                return missingExtensions;
-            }
-        ).then(
-            function (missingExtensions) {
-                if (missingExtensions.length > 0) {
-                    return InstallMissingExtensionsDialog.show(missingExtensions);
+                    tabObserver.observe(installedTabSelector, {
+                        childList: true,
+                        characterData: true
+                    });
                 }
-            }
-        ).done();
+            });
+        });
+
+        var config = { childList: true, characterData: true };
+
+        observer.observe(target, config);
+        
+        StatusBar.addIndicator("team-extensions", $missingExtensionsIndicator, false);
+        updateStatusBar();
+        TeamExtensions.on("change", function () {
+            updateStatusBar();
+        });
+        ExtensionManager.on("statusChange", function () {
+            updateStatusBar();
+        });
     });
+    
+    ProjectManager.on("projectOpen", function () {
+        updateStatusBar(true);
+    });
+
+    ProjectManager.on("projectClose", function () {
+        StatusBar.updateIndicator("team-extensions", false);
+    });
+    
 });

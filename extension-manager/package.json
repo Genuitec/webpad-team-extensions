@@ -1,13 +1,13 @@
 {
-    "name": "genuitec.team-extensions.extension-manager",
+    "name": "genuitec.team-extensions",
     "title": "Team Extensions by WebPad",
-    "description": "Team Extensions by WebPad",
-    "homepage": "http://genuitec.com",
-    "version": "0.0.1",
-    "author": "Salvador Cabrera <sal@genuitec.com> (http://genuitec.com)",
-    "license": "WebPad Commerical License",
+    "description": "Share and load your team's preferred extensions via version control. Don’t waste time having everyone figure out which extensions work best for your project!",
+    "homepage": "http://genuitec.com/products/webpad/teamext/",
+    "version": "0.9.0",
+    "author": "WebPad Team at Genuitec",
+    "license": "WebPad Commercial License",
     "engines": {
-        "brackets": ">=0.24.0"
+        "brackets": ">=1.2.0"
     },
-    "i18n": ["en"]
+    "keywords": ["team", "extensions"]
 }

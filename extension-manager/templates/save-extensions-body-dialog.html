@@ -1,9 +1,21 @@
-<h3>Enabled Extensions</h3>
-<ul>
-    {{#extensions}}
-        <li>
-            <i>{{id}}</i> <strong>({{version}})</strong>
-        </li>
-    {{/extensions}}
-</ul>
-<div class="install-status"></div>      
+<div class="extension-manager-dialog modal">
+    <div class="modal-header">
+    </div>
+    <div class="modal-body no-padding table-striped tab-content">
+        <div class="info-message" style="line-height: 2em;">
+           <div class="left-column" style="width: 70%; float: left;">
+                Choose which extensions should be used by your fellow team members.
+           </div>
+           <div class="right-column" style="text-align: right; float: right;">
+           </div>
+        </div>
+        <table class="table">
+            <tbody class="extension-list">
+                    
+            </tbody>
+        </table>        
+    </div>
+    <div class="modal-footer">
+        <button class="dialog-button btn primary" data-button-id="close">Close</button>
+    </div>
+</div>
