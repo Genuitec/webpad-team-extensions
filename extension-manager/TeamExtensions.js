@@ -153,17 +153,34 @@ define(function (require, exports, module) {
                     extensions[teamExtensionId] = extensionRegistryInfo;
                 }
             });
+        }).then(function () {
+            extensions = extensions.sort(function (key1, key2) {
+                var metadata1 = extensions[key1].registryInfo.metadata,
+                    metadata2 = extensions[key2].registryInfo.metadata,
+                    id1 = (metadata1.title || metadata1.name).toLocaleLowerCase(),
+                    id2 = (metadata2.title || metadata2.name).toLocaleLowerCase();
+
+                return id1.localeCompare(id2);
+            });
         });
     }
     
     function getAll() {
-        return _.values(extensions);
+        return _.values(extensions).sort(function (key1, key2) {
+            var metadata1 = key1.metadata,
+                metadata2 = key2.metadata;
+                        
+            var id1 = (metadata1.title || metadata1.name).toLocaleLowerCase();
+            var id2 = (metadata2.title || metadata2.name).toLocaleLowerCase();
+
+            return id1.localeCompare(id2);
+        });
     }
     
     function manageExtensions() {
         var extensionsToSave = null,
             saveExtensionsDialog = null;
-        
+
         saveExtensionsDialog = SaveExtensionsDialog.show(getEnabledExtensions(ExtensionManager));
         saveExtensionsDialog.getPromise().then(function (buttonId) {
             return getMarkedAsTeam();
