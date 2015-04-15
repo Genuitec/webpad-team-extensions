@@ -3,7 +3,7 @@
 
 define(function (require, exports, module) {
     "use strict";
-
+    
     var SAVE_EXTENSIONS_DIALOG_ID = "save-extensions-dialog",
         SAVE_EXTENSIONS_DIALOG_TITLE = "Save Extensions",
         SAVE_BUTTON_ID = "save-extensions-save-button",
@@ -47,12 +47,20 @@ define(function (require, exports, module) {
             FileSystem = brackets.getModule("filesystem/FileSystem"),
             FileUtils = brackets.getModule("file/FileUtils"),
             ProjectManager = brackets.getModule("project/ProjectManager"),
-            Dialogs = brackets.getModule("widgets/Dialogs");
+            Dialogs = brackets.getModule("widgets/Dialogs"),
+            NativeApp =  brackets.getModule("utils/NativeApp");
+
         
         var extensions = TeamExtensions.getAll();
         dialog = Dialogs.showModalDialogUsingTemplate(
             Mustache.render(SaveExtensionsBodyTemplate)
         );
+        
+        var $needHelp = $("<a href='#need-help' style='margin-left: 3px;'>Need Help?</a>")
+            .click(function () {
+                NativeApp.openURLInDefaultBrowser("https://www.genuitec.com/go/teamext-help");
+            });
+        dialog.getElement().find("div.left-column").append($needHelp);
         
         var $trackAll = $("<a href='#team-track-alll'>Track All</a>")
             .click(function () {

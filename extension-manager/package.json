@@ -2,7 +2,7 @@
     "name": "genuitec.team-extensions",
     "title": "Team Extensions by WebPad",
     "description": "Share and load your team's preferred extensions via version control. Don’t waste time having everyone figure out which extensions work best for your project!",
-    "homepage": "http://genuitec.com/products/webpad/teamext/",
+    "homepage": "https://www.genuitec.com/products/webpad/teamext/",
     "version": "0.9.0",
     "author": "WebPad Team at Genuitec",
     "license": "WebPad Commercial License",
