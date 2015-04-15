@@ -63,18 +63,21 @@ define(function (require, exports, module) {
             .appendTo($containerRightColumn)
             .click(function () {
                 console.log('clicked');
-                TeamExtensions.getExtensionsId()
-                    .then(function (extensionsId) {
-                        return Async.doSequentially(extensionsId, function (extensionId) {
-                            var extensionRecord = ExtensionManager.extensions[extensionId];
-                            var extensionVersion = extensionRecord.registryInfo.metadata.version;
-                            var extensionURL = ExtensionManager.getExtensionURL(extensionId, extensionVersion);
-                            return InstallExtensionDialog.installUsingDialog(extensionURL);
-                        });
-                    })
-                    .done(function () {
-                        console.log("Extensions Installed");
-                    });
+                var extensionsToInstall = [];
+                
+                // Looking for extensions to install
+                self.$el.find("button.install").each(function (index) {
+                    if ( $(this).prop("disabled") === false ) {
+                        extensionsToInstall.push($(this).attr("data-extension-id"));
+                    }            
+                });
+
+                Async.doSequentially(extensionsToInstall, function (extensionId) {
+                    var extensionRecord = ExtensionManager.extensions[extensionId];
+                    var extensionVersion = extensionRecord.registryInfo.metadata.version;
+                    var extensionURL = ExtensionManager.getExtensionURL(extensionId, extensionVersion);
+                    return InstallExtensionDialog.installUsingDialog(extensionURL);
+                });
             });
         
         
