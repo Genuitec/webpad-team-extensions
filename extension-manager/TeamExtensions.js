@@ -131,6 +131,9 @@ define(function (require, exports, module) {
     
     function update() {
         var teamExtensionIds = [];
+        
+        // Resetting extensions
+        extensions = [];
 
         return getExtensionsId().then(function (extensionsId) {
             teamExtensionIds = extensionsId;
