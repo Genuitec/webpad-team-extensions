@@ -30,7 +30,7 @@ define(function (require, exports, module) {
         CommandManager.execute("file.extensionManager");
     });
     
-    CommandManager.register("Manage Extensions", SAVE_EXTENSIONS_COMMAND_ID, function () {
+    CommandManager.register("Manage Extensions...", SAVE_EXTENSIONS_COMMAND_ID, function () {
         ExtensionManager.downloadRegistry().then(function () {
             TeamExtensions.manageExtensions();
         }).done();
