@@ -30,6 +30,7 @@ define(function (require, exports, module) {
         var self = this,
             result = new $.Deferred();
         this.model = model;
+        this.model.on("change", this._updateInstall.bind(this));
         this._itemTemplate = Mustache.compile(itemTemplate);
         this._itemViews = {};
         this.$el = $("<div class='extension-list tab-pane' id='" + this.model.source + "'/>");
@@ -58,7 +59,7 @@ define(function (require, exports, module) {
         $containerLeftColumn.append($manage);
         $containerLeftColumn.append("<span> your extensions at any time, and they are saved per-project for sharing via source control.</span>");
 
-        $('<button id="team-install-all" class="btn primary" href="#team-install-all">Install All</button>')
+        this.$installAllButton = $('<button id="team-install-all" class="btn primary" href="#team-install-all">Install All</button>')
             .appendTo($containerRightColumn)
             .click(function () {
                 console.log('clicked');
@@ -75,6 +76,8 @@ define(function (require, exports, module) {
                         console.log("Extensions Installed");
                     });
             });
+        
+        
         var extensionsToSave = null,
             saveExtensionsDialog = null;
         
@@ -93,6 +96,25 @@ define(function (require, exports, module) {
         });
         
         return result.promise();
+    };
+    
+    TeamExtensionManagerView.prototype._updateInstall = function () {
+        var self = this,
+            installAllButtonDisabled = true;
+
+        // Check if there is any extension available to install, if this is
+        // the case then, enable the Install All button; disable it otherwise
+        this.$el.find("button.install").each(function (index) {
+            if ( $(this).prop("disabled") === false ) {
+                installAllButtonDisabled = false;
+            }            
+        });
+        
+        if( installAllButtonDisabled ) {
+            self.$installAllButton.prop("disabled", true);
+        } else {
+            self.$installAllButton.prop("disabled", false);
+        }
     };
     
     TeamExtensionManagerView.prototype._updateMessage = function () {
