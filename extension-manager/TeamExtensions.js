@@ -195,8 +195,16 @@ define(function (require, exports, module) {
                     return {id: extension.metadata.name};
                 });
                 
-                var fileContents = JSON.stringify(extensionsToSave, null, 4);
-                return FileUtils.writeText(manifestFile, fileContents, true);
+                if (extensionsToSave.length > 0) {
+                    var fileContents = JSON.stringify(extensionsToSave, null, 4);
+                    return FileUtils.writeText(manifestFile, fileContents, true);
+                } else {
+                        manifestFile.exists( function (error, exists) {
+                            if (exists) {
+                                manifestFile.unlink();
+                            }
+                        });
+                }
             }
         ).then(function () {
             exports.trigger("change");
