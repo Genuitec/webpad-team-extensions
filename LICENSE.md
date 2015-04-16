@@ -1,4 +1,4 @@
-End-User License Agreement
+#End-User License Agreement
 
 PLEASE READ THIS END-USER LICENSE AGREEMENT CAREFULLY BEFORE USING THE SOFTWARE.
 REGARDLESS OF HOW YOU ACQUIRE THE SOFTWARE (ELECTRONICALLY, PRE-LOADED, ON MEDIA
@@ -8,7 +8,7 @@ AGREEMENT. IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS END-USER
 LICENSE AGREEMENT, YOU MAY NOT DOWNLOAD, INSTALL OR USE THE SOFTWARE.
 
 
-1.0 Definitions.
+##1.0 Definitions.
 
 1.1) 'Licensor' means Genuitec L.L.C.; 1.2) 'Licensee' means anyone that
 downloads and/or install the software on one or more computers; 1.3) 'Software'
@@ -34,7 +34,7 @@ Software, as they will be made by Licensor under no obligation or commitment to
 do so;
 
 
-2.0 License to Use the Software.
+##2.0 License to Use the Software.
 
 The Software, including Licensed Content, is protected by copyright under United
 States, foreign laws and international treaties. Unauthorized use of the
@@ -63,7 +63,7 @@ normal places of business; or g) 'mirror' the Software or Licensed Content on
 external servers.
 
 
-3.0 Limitation of Liability.
+##3.0 Limitation of Liability.
 
 This program is provided “as is” without warranties of any kind, either
 expressed or implied.  Licensor assumes no responsibility for the selection or
@@ -87,7 +87,7 @@ possibility of these damages), arising from any user Content created and/or
 published by Licensee, or for any claim by any other party.
 
 
-4.0 Termination of Agreement.
+##4.0 Termination of Agreement.
 
 The Agreement takes effect upon Licensor's use of the Software and remains
 effective until terminated. The Agreement shall immediately and automatically
@@ -104,7 +104,7 @@ shareware, licensed royalty software, or public domain). Doing so will not
 modify the license agreement of previously distributed executables.
 
 
-5.0 Confidentiality.
+##5.0 Confidentiality.
 
 The Software contains trade secrets and proprietary know- how that belong to the
 Licensor and it is being made available to Licensee in strict confidence. Any
@@ -113,7 +113,7 @@ interfaces, other than in strict accordance with the Agreement may be actionable
 as a violation of licensor trade secret rights.
 
 
-6.0 Indemnity.
+##6.0 Indemnity.
 
 Licensee will indemnify Licensor and hold it harmless from and against any and
 all claims which a third party may assert against Licensor by reason of or as a
@@ -121,7 +121,7 @@ consequence of Licensees use of the Software, including without limitation any
 claims arising from any User Content created and/or published by Licensee
 
 
-7.0 General Provisions.
+##7.0 General Provisions.
 
 The Agreement constitutes the entire agreement between the parties and
 supersedes all prior agreements and understandings, oral and written, express
@@ -142,8 +142,8 @@ of the remaining provisions contained in the Agreement shall not in any way be
 affected or impaired as a result of such event.
 
 
-8.0 Copyright and Trademark Notices.
+##8.0 Copyright and Trademark Notices.
 
 All Software and Licensed Content is Copyright © 2015 Genuitec. 2221 Justin Rd
-#119-340, Flower Mound, TX 75028. Any rights not expressly granted herein are
+\#119-340, Flower Mound, TX 75028. Any rights not expressly granted herein are
 reserved to the Licensor.
