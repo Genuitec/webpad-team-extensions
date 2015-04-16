@@ -1,3 +1,6 @@
+// Licensed under the WebPad Commercial License
+// Copyright 2015 Genuitec, LLC. All rights reserved.
+
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, brackets, Mustache, $ */
 
