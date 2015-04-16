@@ -1,6 +1,8 @@
 # Team Extensions by WebPad
 
-Team Extensions for Brackets is the first in a suite of WebPad extensions. You need your team of web developers and designers to keep their Brackets setup in sync with specific extensions used for a project. Team Extensions makes it easy to communicate and install required team project extensions. Ready, set, code!
+[Team Extensions for Brackets](https://www.genuitec.com/products/webpad/teamext/) is the first in a suite of WebPad extensions. You need your team of web developers and designers to keep their Brackets setup in sync with specific extensions used for a project. Team Extensions makes it easy to communicate and install required team project extensions. Ready, set, code!
+
+At [Genuitec](https://www.genuitec.com/), we are a fan of Brackets for front-end web development. [WebPad](https://www.genuitec.com/products/webpad/) is shaping up to be a suite of Brackets extensions that make web development easier. Our first free entry into this suite is Team Extensions by WebPad. Follow @WebPadDev on Twitter to keep up with what’s new!
 
 ![Team Extensions Screenshot](https://resources.cloud.genuitec.com/wp-content/uploads/2015/04/project_extensions.png)
 
